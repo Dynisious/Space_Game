@@ -1,0 +1,13 @@
+hullpoints=100
+collisiondamage=5
+defenceModifier=1
+reverse=2
+forward=1
+strafe=0.75
+turnspeed=24
+mass=0
+minDistance=40
+behaviors= Ram, Evade, Null
+behaviorlock = false
+width=40
+height=40

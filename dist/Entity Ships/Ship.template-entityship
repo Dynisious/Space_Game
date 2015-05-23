@@ -1,0 +1,35 @@
+#'#' specifies a comment.
+#'//' combines the current line and the next line.
+#Spaces are ignored.
+
+hullpoints=0
+
+#The damage other Ships take when they collide with this one.
+collisiondamage=0
+
+#The raw damage this Ship takes will be multiplied by this factor.
+defenceModifier=1
+
+#Forward, Reverse and Strafe are accelerations.
+forward=0
+reverse=0
+strafe=0
+
+#Turnspeed in number of ticks for a 180 turn.
+turnspeed=0
+
+mass=0
+minDistance=0
+
+#Behaviors need to be ordered in order of preference. Behaviors not specified will not be performed
+#at all. Incorrect spelling of the behaviors will cause them to not be included.
+behaviors= Ram, Null, Evade
+
+#BehaviorLock defines whether this Ship type can initially change it's behavior from it's selected.
+behaviorlock = false
+
+#The width of this Ship's bounding box.
+width=0
+
+#The height of this Ship's bounding box.
+height=0
