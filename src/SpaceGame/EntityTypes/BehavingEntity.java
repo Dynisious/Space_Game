@@ -1,6 +1,7 @@
 package SpaceGame.EntityTypes;
 
 import SpaceGame.CombatShips.Behaviors.BehaviorBase;
+import SpaceGame.CombatShips.Behaviors.Null;
 import SpaceGame.CombatShips.CombatShip;
 import SpaceGame.CombatShips.SituationInstant;
 /**
@@ -31,6 +32,11 @@ public class BehavingEntity {
      * preference.</p>
      */
     private BehaviorBase[] behaviors;
+    /**
+     * <p>
+     * The default behavior to perform if no other behavior is available.</p>
+     */
+    private static final Null nullBehavior = new Null();
     /**
      * <p>
      * Whether the CombatShip can alter it's behavior depending on the
@@ -105,6 +111,8 @@ public class BehavingEntity {
                 behaviors[selected].behave(sit, ship);
                 return behaviors[selected].getClass().getSimpleName();
             }
+            nullBehavior.behave(sit, ship);
+            return Null.class.getSimpleName();
         } else { //This CombatShip can change it's behavior.
             for (BehaviorBase b : behaviors) { //Loop through the selection of behaviors for this Ship in order of preference.
                 if (b.check(sit, ship)) { //this behavior can be performed.
@@ -112,8 +120,9 @@ public class BehavingEntity {
                     return b.getClass().getSimpleName();
                 }
             }
+            nullBehavior.behave(sit, ship);
+            return Null.class.getSimpleName();
         }
-        return "No_Behavior";
     }
 
 }
