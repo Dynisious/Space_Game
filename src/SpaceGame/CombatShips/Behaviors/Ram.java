@@ -1,6 +1,6 @@
 package SpaceGame.CombatShips.Behaviors;
 
-import static SpaceGame.Application.*;
+import static SpaceGame.Server.*;
 import SpaceGame.Logger;
 import SpaceGame.CombatShips.CombatShip;
 import SpaceGame.EntityTypes.MobileEntity;

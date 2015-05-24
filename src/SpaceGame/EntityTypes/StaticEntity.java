@@ -1,6 +1,6 @@
 package SpaceGame.EntityTypes;
 
-import static SpaceGame.Application.normaliseAngle;
+import static SpaceGame.Server.normaliseAngle;
 import java.awt.Point;
 /**
  * <p>

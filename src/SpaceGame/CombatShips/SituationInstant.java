@@ -1,6 +1,6 @@
 package SpaceGame.CombatShips;
 
-import static SpaceGame.Application.*;
+import static SpaceGame.Server.*;
 import java.util.HashMap;
 
 /**

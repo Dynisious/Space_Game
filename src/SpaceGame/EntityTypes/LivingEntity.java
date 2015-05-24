@@ -7,7 +7,7 @@ import SpaceGame.Logger;
  * Contains the values for an Entity which is capable of dying.</p>
  *
  * @author Dynisious 23/05/2015
- * @versions 0.0.1
+ * @versions 0.0.2
  */
 public class LivingEntity {
     /**
@@ -83,8 +83,10 @@ public class LivingEntity {
         if (healthPoints <= 0) { //This LivingEntity has died.
             state = LifeStates.Finalising;
         }
-        Logger.getInstance().write(logString + " damage raw=" + damage
-                + " modified=" + modifiedDamage + " health=" + healthPoints);
+        Logger.getInstance().write(
+                logString + " damage raw=" + String.format("%-4.2f", damage)
+                + " modified=" + String.format("%-4.2f", modifiedDamage)
+                + " health=" + String.format("%-4.0f", healthPoints));
     }
 
     /**
@@ -141,15 +143,15 @@ public class LivingEntity {
                     sit.combatants.get(i).getBaseShip().getLivingEntity().takeDamage(
                             entity.getPositionEntity().getCollideDamage(),
                             sit.combatants.get(i).toString() + ": Collision"); //The other LivingEntity takes damage.
-                    
+
                     entity.getMobileEntity().setXSpeed(0);
                     entity.getMobileEntity().setYSpeed(0);
-                    
+
                     target.getMobileEntity().setXSpeed(0);
                     target.getMobileEntity().setYSpeed(0);
                 }
             }
         }
     }
-    
+
 }

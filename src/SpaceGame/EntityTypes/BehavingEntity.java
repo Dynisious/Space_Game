@@ -31,9 +31,6 @@ public class BehavingEntity {
      * preference.</p>
      */
     private BehaviorBase[] behaviors;
-    public BehaviorBase[] getBehaviors() {
-        return behaviors;
-    }
     /**
      * <p>
      * Whether the CombatShip can alter it's behavior depending on the

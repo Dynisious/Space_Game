@@ -38,6 +38,9 @@ public final class SpaceCombat implements GameModule {
      * The Array of CombatShipTemplates to base new Ships off.</p>
      */
     private CombatShipBase[] templates;
+    public CombatShipBase[] getTemplates() {
+        return templates;
+    }
     /**
      * <p>
      * The IDs to be unloaded after each tick.</p>
@@ -47,7 +50,7 @@ public final class SpaceCombat implements GameModule {
      * <p>
      * An ArrayList of CombatShip's pending loading.</p>
      */
-    private ArrayList<CombatShip> pending = new ArrayList<>();
+    private ArrayList<CombatShip> pendingLoad = new ArrayList<>();
 
     /**
      * <p>
@@ -72,6 +75,25 @@ public final class SpaceCombat implements GameModule {
 
     /**
      * <p>
+     * Puts the passed Ships into a List of pending loads.</p>
+     *
+     * @param ship
+     */
+    public void loadShip(CombatShip ship) throws NullPointerException {
+        if (ship == null) {
+            throw new NullPointerException("ERROR : Ship was a null value.");
+        }
+        if (ship.id != -1) { //This CombatShip has been loaded elswhere.
+            throw new NullPointerException(
+                    "ERROR : This Ship has already been loaded elsewhere.");
+        }
+        synchronized (pendingLoad) {
+            pendingLoad.add(ship);
+        }
+    }
+
+    /**
+     * <p>
      * Loads the passed Ship into the next available ID.</p>
      *
      * @param ship The Ship to load.
@@ -81,7 +103,7 @@ public final class SpaceCombat implements GameModule {
      *
      * @throws NullPointerException Thrown if Ship is null.
      */
-    private boolean loadShip(CombatShip ship) throws NullPointerException {
+    private boolean addShip(CombatShip ship) throws NullPointerException {
         if (ship == null) {
             throw new NullPointerException("ERROR : Ship was a null value.");
         }
@@ -97,8 +119,8 @@ public final class SpaceCombat implements GameModule {
                         + getClass().getSimpleName());
                 return true;
             } else { //There's no room for more Ships.
-                synchronized (pending) {
-                    pending.add(ship);
+                synchronized (pendingLoad) {
+                    pendingLoad.add(ship);
                 }
                 Logger.getInstance().write(
                         ship.toString() + " could not load into "
@@ -138,13 +160,13 @@ public final class SpaceCombat implements GameModule {
      *
      * @param ids The IDs to unload.
      */
-    private void finaliseShips() {
+    private void removeShips() {
         synchronized (finalising) {
             for (Integer i : finalising) {
                 combatants.remove(i).getBaseShip().getLivingEntity().state = LivingEntity.LifeStates.Dead;
-                synchronized (pending) {
-                    if (!pending.isEmpty()) { //Load in the next pending CombatShip.
-                        loadShip(pending.remove(0));
+                synchronized (pendingLoad) {
+                    if (!pendingLoad.isEmpty()) { //Load in the next pending CombatShip.
+                        loadShip(pendingLoad.remove(0));
                     }
                 }
             }
@@ -156,20 +178,34 @@ public final class SpaceCombat implements GameModule {
     public GameStates tick() {
         Logger.getInstance().write("---------------");
 
-        GameStates returnState = GameStates.Null; //The state to return to the ModuleManager
-        if (!combatants.isEmpty()) {
-            synchronized (finalising) {
-                int firstFaction = ((CombatShip) combatants.values().toArray()[0]).getFaction();
-                for (int id : combatants.keySet()) {
-                    if (combatants.get(id).getFaction() != firstFaction) { //There are enemies here.
-                        returnState = GameStates.Combat;
+        synchronized (pendingLoad) {
+            if (!pendingLoad.isEmpty()) {
+                for (int i = 0; i < pendingLoad.size(); i++) {
+                    if (addShip(pendingLoad.get(i))) { //The CombatShip was added successfuly.
+                        pendingLoad.remove(i);
+                    } else { //The CombatShip was not loaded.
+                        break;
                     }
-                    combatants.get(id).tick(combatants, this);
                 }
             }
         }
 
-        finaliseShips(); //Remove all finalising IDs
+        GameStates returnState = GameStates.Null; //The state to return to the ModuleManager
+        synchronized (combatants) {
+            if (!combatants.isEmpty()) {
+                synchronized (finalising) {
+                    int firstFaction = ((CombatShip) combatants.values().toArray()[0]).getFaction();
+                    for (int id : combatants.keySet()) {
+                        if (combatants.get(id).getFaction() != firstFaction) { //There are enemies here.
+                            returnState = GameStates.Combat;
+                        }
+                        combatants.get(id).tick(combatants, this);
+                    }
+                }
+            }
+        }
+
+        removeShips(); //Remove all finalising IDs
 
         Logger.getInstance()
                 .write(System.lineSeparator() + getClass().getSimpleName() + " has ticked.");

@@ -23,7 +23,7 @@ minDistance=0
 
 #Behaviors need to be ordered in order of preference. Behaviors not specified will not be performed
 #at all. Incorrect spelling of the behaviors will cause them to not be included.
-behaviors= Ram, Null, Evade
+behaviors= Ram, Null
 
 #BehaviorLock defines whether this Ship type can initially change it's behavior from it's selected.
 behaviorlock = false
